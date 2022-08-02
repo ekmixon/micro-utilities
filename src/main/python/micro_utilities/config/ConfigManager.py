@@ -41,20 +41,19 @@ def reload_config(additional_config_files=None):
             try:
                 expanded[key] = value.format(**config)
             except IndexError:
-                logging.error("Error expanding value {} - {}".format(value, str(config)))
-    config.update(expanded)
+                logging.error(f"Error expanding value {value} - {config}")
+    config |= expanded
 
 
 def load_config_file(config_target, config_file):
     env = get_environment()
     with open(config_file, "r+") as fp:
         evaluated_content = ""
-        for line in fp.readlines():
+        for line in fp:
             expanded = os.path.expandvars(line)
             evaluated_content += expanded
         config_store = json.loads(evaluated_content)
-        default_ = config_store["default"]
-        if default_:
+        if default_ := config_store["default"]:
             config_target.update(default_)
         if env in config_store:
             config_target.update(config_store[env])
@@ -69,8 +68,7 @@ def get_value(key):
 
 
 def get_int_value(key):
-    default = get_value_default(key, None)
-    if default:
+    if default := get_value_default(key, None):
         return int(default)
     raise ValueError("Requested unknown key")
 
