@@ -29,7 +29,7 @@ class ParentTestCase(unittest.TestCase):
 
     @classmethod
     def randomWord(cls, param):
-        return ''.join(random.choice(string.lowercase) for i in range(param))
+        return ''.join(random.choice(string.lowercase) for _ in range(param))
 
     def setUp(self):
         super(ParentTestCase, self).setUp()
@@ -39,9 +39,9 @@ class ParentTestCase(unittest.TestCase):
     def _get_resource_path(cls, config):
         return os.path.join(cls.resource_directory, config)
 
-    def open_resource_as_json(cls, resource_file, root_path=None):
+    def open_resource_as_json(self, resource_file, root_path=None):
         if not root_path:
-            root_path = cls.resource_directory
+            root_path = self.resource_directory
         template_format = PATH_TEMPLATE.format(resource_file=resource_file, base_path=root_path)
         if ".gz" in resource_file:
             with gzip.open(template_format, "r") as fp:
@@ -56,6 +56,6 @@ class ParentTestCase(unittest.TestCase):
             kwargs = {}
         try:
             func_pointer(**kwargs)
-            self.fail("Failed to throw exception for {}".format(msg))
+            self.fail(f"Failed to throw exception for {msg}")
         except:
             pass

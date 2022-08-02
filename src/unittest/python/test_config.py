@@ -30,8 +30,12 @@ class TestConfigurationManager(ParentTestCase):
         self.validate_config_load()
 
     def validate_config_load(self):
-        self.assertEqual(ConfigManager.get_value("foo"), 'default-foo',
-                         "Did not load default value for foo - {}".format(ConfigManager.get_value("foo")))
+        self.assertEqual(
+            ConfigManager.get_value("foo"),
+            'default-foo',
+            f'Did not load default value for foo - {ConfigManager.get_value("foo")}',
+        )
+
         self.assertEqual(ConfigManager.get_value("bar"), 'default-foo-bar', "Did not substitute value for bar")
         self.assertEqual(ConfigManager.get_value("baz"), 'unit-test-baz',
                          "Did not override environmental value value for baz")

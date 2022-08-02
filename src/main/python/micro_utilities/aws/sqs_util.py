@@ -25,11 +25,12 @@ def monitor_queue(queue_name_config_key, processing_function_pointer,force_creat
     conn, queue = _init_queue(ConfigManager.get_value(queue_name_config_key),force_create)
     logging.info("Listening to queue %s", queue.name)
     while True:
-        result_set = conn.receive_message(queue, number_messages=10, wait_time_seconds=20)
-        count = 0
-        if result_set:
+        if result_set := conn.receive_message(
+            queue, number_messages=10, wait_time_seconds=20
+        ):
             to_delete = []
             logging.info("Received %d messages", len(result_set))
+            count = 0
             for message in result_set:
                 try:
                     processing_function_pointer(message.get_body())
@@ -37,7 +38,7 @@ def monitor_queue(queue_name_config_key, processing_function_pointer,force_creat
                     count += 1
                 except Exception as e:
                     logging.error("Error peristing message %s", e.message)
-            if len(to_delete) > 0:
+            if to_delete:
                 conn.delete_message_batch(queue=queue, messages=to_delete)
 
 
